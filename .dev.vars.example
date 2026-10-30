@@ -1,0 +1,7 @@
+# Sao chép thành .dev.vars để thử form khi chạy `npx wrangler pages dev .`
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+LEAD_WEBHOOK_URL=
+RESEND_API_KEY=
+LEAD_EMAIL_TO=phuong@dacanco.com
+LEAD_EMAIL_FROM=
