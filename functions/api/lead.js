@@ -43,7 +43,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   const lines = [
-    "Yêu cầu mới từ website Đắc An",
+    "Yêu cầu mới từ website Thợ Đúng",
     `Loại khách: ${lead.segment || "-"}`,
     `Họ tên: ${lead.name}`,
     `SĐT: ${lead.phone}`,
@@ -82,7 +82,7 @@ export async function onRequestPost({ request, env }) {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.RESEND_API_KEY}` },
       body: JSON.stringify({
-        from: env.LEAD_EMAIL_FROM || "Website Đắc An <onboarding@resend.dev>",
+        from: env.LEAD_EMAIL_FROM || "Website Thợ Đúng <onboarding@resend.dev>",
         to: env.LEAD_EMAIL_TO.split(",").map((s) => s.trim()),
         reply_to: lead.email || undefined,
         subject: `[Website] ${lead.need} - ${lead.name}`,

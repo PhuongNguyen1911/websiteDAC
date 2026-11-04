@@ -1,4 +1,4 @@
-/* Điện Lạnh Đắc An — site behaviour (no dependencies) */
+/* Thợ Đúng — site behaviour (no dependencies) */
 (function () {
   "use strict";
   var doc = document.documentElement;
@@ -119,11 +119,11 @@
     function validate() {
       var ok = true, firstBad = null;
       var name = form.elements.name, phone = form.elements.phone, need = form.elements.need, email = form.elements.email;
-      if (name && !name.value.trim()) { setErr(name, "Nhập họ tên để Đắc An xưng hô khi gọi lại."); ok = false; firstBad = firstBad || name; } else if (name) setErr(name, "");
+      if (name && !name.value.trim()) { setErr(name, "Nhập họ tên để Thợ Đúng xưng hô khi gọi lại."); ok = false; firstBad = firstBad || name; } else if (name) setErr(name, "");
       var digits = phone ? phone.value.replace(/\D/g, "") : "";
-      if (phone && (digits.length < 9 || digits.length > 12)) { setErr(phone, "Nhập số điện thoại 9–12 chữ số, ví dụ 0916 756 248."); ok = false; firstBad = firstBad || phone; } else if (phone) setErr(phone, "");
+      if (phone && (digits.length < 9 || digits.length > 12)) { setErr(phone, "Nhập số điện thoại 9–12 chữ số, ví dụ 0983 05 09 05."); ok = false; firstBad = firstBad || phone; } else if (phone) setErr(phone, "");
       if (email && email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) { setErr(email, "Email chưa đúng định dạng."); ok = false; firstBad = firstBad || email; } else if (email) setErr(email, "");
-      if (need && !need.value) { setErr(need, "Chọn nhu cầu để Đắc An chuyển đúng bộ phận."); ok = false; firstBad = firstBad || need; } else if (need) setErr(need, "");
+      if (need && !need.value) { setErr(need, "Chọn nhu cầu để Thợ Đúng chuyển đúng bộ phận."); ok = false; firstBad = firstBad || need; } else if (need) setErr(need, "");
       if (firstBad) firstBad.focus();
       return ok;
     }
@@ -151,7 +151,7 @@
       }).then(function (r) {
         if (r.ok && r.body && r.body.ok) {
           status.className = "form__status is-ok";
-          status.textContent = "Đã gửi yêu cầu. Đắc An sẽ gọi lại cho bạn sớm nhất.";
+          status.textContent = "Đã gửi yêu cầu. Thợ Đúng sẽ gọi lại cho bạn sớm nhất.";
           form.reset();
           syncSegment();
         } else {
@@ -159,7 +159,7 @@
         }
       }).catch(function () {
         status.className = "form__status is-err";
-        status.innerHTML = 'Chưa gửi được yêu cầu. Vui lòng gọi <a href="tel:+84916756248">0916 756 248</a> hoặc email <a href="mailto:phuong@dacanco.com">phuong@dacanco.com</a>.';
+        status.innerHTML = 'Chưa gửi được yêu cầu. Vui lòng gọi <a href="tel:+84983050905">0983 05 09 05</a> hoặc email <a href="mailto:phuong@dacanco.com">phuong@dacanco.com</a>.';
       }).finally(function () {
         submit.disabled = false;
         submit.textContent = label;
