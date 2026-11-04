@@ -143,6 +143,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .hero__copy{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;padding:clamp(48px,6vw,96px) clamp(24px,4vw,64px) clamp(48px,6vw,96px) 0}
 .hero h1{font-size:var(--step-5);line-height:1.04;letter-spacing:-.035em;color:var(--navy)}
 .hero h1 .line2{display:block;color:var(--blue)}
+.hero h1.hero__title--list{font-size:clamp(2.1rem,1.3rem + 2.3vw,3.4rem);line-height:1.08}
+
 .hero__lead{margin-top:26px;font-size:var(--step-1);color:var(--muted);max-width:44ch;line-height:1.6}
 .hero__actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
 .hero__hotline{display:flex;align-items:center;gap:14px;margin-top:36px;padding-top:26px;border-top:1px solid var(--line);max-width:520px}
@@ -225,8 +227,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .svc__media .stamp{position:absolute;left:0;bottom:0;background:var(--navy);color:#fff;padding:12px 30px 12px 20px;font-weight:700;font-size:var(--step--1);clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%)}
 
 /* ---------- Home-service device grid ---------- */
-.devices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
-.device{display:flex;flex-direction:column;gap:14px;padding:28px 26px 26px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff;text-decoration:none;transition:background-color .2s}
+.devices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.device{display:flex;flex-direction:column;gap:14px;padding:26px 22px 24px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff;text-decoration:none;transition:background-color .2s}
 .device:hover{background:var(--paper)}
 .device__icon{width:52px;height:52px;display:grid;place-items:center;background:var(--navy);color:#fff}
 .device__icon .ic{width:26px;height:26px}
@@ -522,6 +524,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   .topbar{display:none}
   .brand img{height:34px}
   .hero h1{font-size:clamp(2.35rem,9.6vw,3.2rem)}
+  .hero h1.hero__title--list{font-size:clamp(1.9rem,7.6vw,2.5rem)}
   .hero__actions .btn{flex:1 1 100%}
   .hero__caption{left:var(--gutter);right:var(--gutter);max-width:none;bottom:24px}
   .ledger__row{grid-template-columns:1fr 1fr;gap:6px}
