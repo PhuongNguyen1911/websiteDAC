@@ -57,6 +57,10 @@ Thử form khi chạy local: chép `.dev.vars.example` thành `.dev.vars` và đ
 - [ ] Bổ sung tên thương hiệu của logo khách hàng chữ "R" (đang để alt "Logo khách hàng chữ R").
 - [ ] Bổ sung nếu có: mã số thuế, chính sách bảo hành sau dịch vụ, bảng giá, ảnh công trình thực tế.
 
+## Cập nhật CSS/JS/ảnh trùng tên
+
+Trình duyệt lưu tạm file trong `assets/`. Mỗi khi sửa `style.css`, `main.js` hoặc thay một ảnh mà giữ nguyên tên file, hãy đổi số phiên bản `?v=20261105` trong `index.html`, `dich-vu/index.html`, `404.html` (và `site.webmanifest` nếu đổi icon) sang số mới, ví dụ ngày sửa. Ảnh mới đặt tên mới thì không cần.
+
 ## Nhận diện thương hiệu
 
 - Logo: `assets/img/logos/thodung*.png|webp` (ngang màu, ngang trắng, dấu D-check), favicon và app icon trong `assets/img/`.

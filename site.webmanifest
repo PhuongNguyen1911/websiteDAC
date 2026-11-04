@@ -1,7 +1,7 @@
 {
   "name": "Thợ Đúng",
   "short_name": "Thợ Đúng",
-  "icons": [{ "src": "/assets/img/icon-512.png", "sizes": "512x512", "type": "image/png" }],
+  "icons": [{ "src": "/assets/img/icon-512.png?v=20261105", "sizes": "512x512", "type": "image/png" }],
   "theme_color": "#0F1B2D",
   "background_color": "#FFFFFF",
   "display": "browser",

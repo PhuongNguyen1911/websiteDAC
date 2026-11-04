@@ -7,8 +7,12 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# CSS/JS: bỏ rule "immutable" ở trên, chỉ lưu 1 giờ.
+# Khi sửa CSS/JS, đổi ?v=... trong các file HTML để khách thấy ngay.
 /assets/css/*
-  Cache-Control: public, max-age=86400
+  ! Cache-Control
+  Cache-Control: public, max-age=3600
 
 /assets/js/*
-  Cache-Control: public, max-age=86400
+  ! Cache-Control
+  Cache-Control: public, max-age=3600
