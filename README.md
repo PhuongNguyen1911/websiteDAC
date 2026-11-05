@@ -65,7 +65,7 @@ Thử form khi chạy local: chép `.dev.vars.example` thành `.dev.vars` và đ
 Khách nhập **mã đơn hàng** và **3 số cuối số điện thoại**. Website gọi `/api/tra-cuu` (`functions/api/tra-cuu.js`). API này gọi một Google Apps Script gắn vào file Google Sheets đơn hàng, và script chỉ trả về **đúng 1 đơn khi khớp cả 2 thông tin**.
 
 - File Sheets vẫn để riêng tư, không chia sẻ công khai.
-- Không bao giờ trả về tên, số điện thoại, địa chỉ hay ghi chú nội bộ. Khách chỉ thấy: mã đơn, trạng thái, ngày đơn hàng, ngày lắp đặt, tỉnh, dịch vụ (nếu sheet có các cột này) và cột "Ghi chú cho khách" (nếu bạn tạo).
+- Không bao giờ trả về tên, số điện thoại, địa chỉ hay ghi chú nội bộ. Khách chỉ thấy: mã đơn, trạng thái, ngày lắp đặt/hẹn lắp (với 2 trạng thái tương ứng) và cột "Ghi chú cho khách" (nếu bạn tạo).
 - Nhập sai 5 lần cho cùng 1 mã đơn thì mã đó bị khóa tra cứu 15 phút.
 
 ### Cài đặt (làm 1 lần)
@@ -85,18 +85,20 @@ Có thể gửi link điền sẵn mã đơn cho khách: `https://www.thodung.co
 
 ### Trạng thái hiển thị
 
-Trang tự đọc chữ trong cột trạng thái và hiện thanh tiến trình 4 bước (Tiếp nhận → Hẹn lịch → Đang lắp → Hoàn tất):
+Thanh tiến trình 4 bước: **Tiếp nhận đơn → Giao hàng → Hẹn lịch lắp → Lắp đặt**. Nhãn luôn hiện nguyên văn chữ trong cột "Trạng thái lắp đặt".
 
-| Chữ trong sheet có chứa | Hiển thị |
-|---|---|
-| "Thành công", "Hoàn thành", "Đã lắp" | Hoàn tất (xanh lá) |
-| "Thất bại", "Chưa thành công" | Dừng ở bước Đang lắp, báo sẽ hẹn lại (cam) |
-| "Không có nhu cầu", "Hủy", "Từ chối" | Đơn đã đóng (xám, không có thanh tiến trình) |
-| "Đang…" | Đang lắp đặt |
-| "Hẹn", "Phân công", "Điều phối", "Xác nhận", "Chờ lắp" | Hẹn lịch lắp |
-| Trống hoặc khác | Tiếp nhận đơn |
+| Trạng thái trong sheet | Thanh tiến trình | Hiển thị thêm |
+|---|---|---|
+| Khách Chờ Giao Hàng | Đang ở bước Giao hàng | |
+| Chưa Liên Hệ Thành Công | Bước Hẹn lịch, màu cam | Nhắc khách gọi hotline/Zalo |
+| Chờ Khách Hàng Báo Lại | Đang ở bước Hẹn lịch | Nhắc khách báo lịch |
+| Hẹn Ngày Lắp Đặt | Đã hẹn, chờ lắp | **Ngày hẹn lắp** (cột "Ngày lắp đặt/Hẹn lắp đặt") |
+| Lắp Đặt Thành Công | Hoàn tất, màu xanh lá | **Ngày lắp đặt** (cùng cột) |
+| Lắp Đặt Thất Bại | Kết thúc, bước Lắp đặt có dấu ✕ màu đỏ | Báo đơn đã kết thúc, mời gọi hotline nếu cần |
+| Không Có Nhu Cầu Lắp Đặt | Đơn đã đóng, màu xám | |
+| Trống hoặc khác | Tiếp nhận đơn | |
 
-Chữ trạng thái gốc trong sheet luôn hiện nguyên văn trên nhãn.
+Ngày trong cột "Ngày lắp đặt/Hẹn lắp đặt" chỉ hiện khi trạng thái là "Hẹn Ngày Lắp Đặt" hoặc "Lắp Đặt Thành Công", và hiện đúng như định dạng trong sheet.
 
 ## Cập nhật CSS/JS/ảnh trùng tên
 

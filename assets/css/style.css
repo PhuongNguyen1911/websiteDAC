@@ -503,6 +503,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .order--ok{--tone:#1E7A3C;--tone-bg:#E8F5EC}
 .order--warn{--tone:#B26A00;--tone-bg:#FFF3DC}
 .order--muted{--tone:var(--muted);--tone-bg:var(--paper)}
+.order--fail{--tone:#B3261E;--tone-bg:#FDECEC}
 .order__head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 24px}
 .order__id small{display:block;color:var(--muted);font-size:var(--step--1)}
 .order__id strong{font-size:var(--step-3);color:var(--navy);letter-spacing:-.01em;word-break:break-all}
@@ -517,8 +518,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 .order__steps li.is-done .dot::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
 .order__steps li.is-current .dot{border-color:var(--blue);box-shadow:0 0 0 5px rgba(20,86,217,.15)}
 .order__steps li.is-warn .dot{border-color:var(--tone);background:var(--tone-bg)}
-.order__steps .lbl{font-weight:700;color:var(--muted);font-size:.95rem}
-.order__steps li.is-done .lbl,.order__steps li.is-current .lbl,.order__steps li.is-warn .lbl{color:var(--navy)}
+.order__steps li.is-fail .dot{background:var(--tone);border-color:var(--tone)}
+.order__steps li.is-fail .dot::before,.order__steps li.is-fail .dot::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:3px;background:#fff;transform:translate(-50%,-50%) rotate(45deg)}
+.order__steps li.is-fail .dot::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.order__steps .lbl{font-weight:700;color:var(--muted);font-size:1.02rem;letter-spacing:.012em;line-height:1.35;font-kerning:none;text-rendering:optimizeLegibility}
+.order__steps li.is-done .lbl,.order__steps li.is-current .lbl,.order__steps li.is-warn .lbl,.order__steps li.is-fail .lbl{color:var(--navy)}
+.order__date{display:inline-grid;justify-self:start;gap:2px;padding:14px 22px 14px 18px;background:var(--tone-bg);border-left:4px solid var(--tone)}
+.order__date small{color:var(--tone);font-weight:700;font-size:var(--step--1)}
+.order__date strong{font-size:var(--step-3);color:var(--navy);line-height:1.1;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .order__msg{font-size:var(--step-1);color:var(--ink);max-width:60ch}
 .order__meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0;margin:0;border-top:1px solid var(--line)}
 .order__meta div{padding:14px 16px 14px 0}

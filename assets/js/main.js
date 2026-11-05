@@ -193,14 +193,22 @@
     function norm(s) {
       return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
     }
+    /* Bộ trạng thái của Thợ Đúng → thanh tiến trình 4 bước.
+       Thứ tự kiểm tra quan trọng: "Chưa Liên Hệ Thành Công" phải xét trước "Thành Công". */
+    var STEPS = ["Tiếp nhận đơn", "Giao hàng", "Hẹn lịch lắp", "Lắp đặt"];
+    var RULES = [
+      [/khong co nhu cau|huy|tu choi/, { tone: "muted", step: 0, msg: "Đơn đã đóng do khách không có nhu cầu lắp đặt. Nếu bạn vẫn cần lắp, vui lòng gọi hotline." }],
+      [/chua lien he/, { tone: "warn", step: 3, msg: "Thợ Đúng đã gọi nhưng chưa liên hệ được với bạn. Vui lòng gọi hotline hoặc nhắn Zalo để hẹn lịch lắp đặt." }],
+      [/that bai|khong thanh cong/, { tone: "fail", step: 4, msg: "Đơn đã kết thúc, lắp đặt không thành công. Nếu cần hỗ trợ thêm, vui lòng gọi hotline hoặc nhắn Zalo." }],
+      [/cho khach( hang)? bao lai/, { tone: "info", step: 3, msg: "Thợ Đúng đang chờ bạn báo lại thời gian thuận tiện. Khi sẵn sàng, bạn gọi hotline hoặc nhắn Zalo để chốt lịch." }],
+      [/hen ngay|da hen|hen lap/, { tone: "info", step: 4, date: "Ngày hẹn lắp", msg: "Đơn đã có lịch hẹn. Kỹ thuật viên sẽ gọi cho bạn trước khi đến." }],
+      [/cho giao hang|dang giao/, { tone: "info", step: 2, msg: "Sản phẩm đang chờ giao. Sau khi bạn nhận hàng, Thợ Đúng sẽ liên hệ hẹn lịch lắp đặt." }],
+      [/thanh cong|hoan thanh|hoan tat|da lap/, { tone: "ok", step: 4, date: "Ngày lắp đặt", msg: "Đơn đã được lắp đặt xong. Cảm ơn bạn đã tin chọn Thợ Đúng." }]
+    ];
     function classify(status) {
       var s = norm(status);
-      if (/thanh cong|hoan thanh|hoan tat|da lap/.test(s)) return { tone: "ok", step: 4, msg: "Đơn đã được lắp đặt xong. Cảm ơn bạn đã tin chọn Thợ Đúng." };
-      if (/that bai|chua thanh cong|khong thanh cong/.test(s)) return { tone: "warn", step: 3, msg: "Lần lắp đặt chưa thành công. Thợ Đúng sẽ liên hệ để hẹn lại lịch. Cần gấp, vui lòng gọi hotline." };
-      if (/khong co nhu cau|huy|tu choi/.test(s)) return { tone: "muted", step: 0, msg: "Đơn đã đóng do khách không có nhu cầu lắp đặt hoặc đã hủy. Nếu thông tin chưa đúng, vui lòng gọi hotline." };
-      if (/dang lap|dang thi cong|dang xu ly|dang/.test(s)) return { tone: "info", step: 3, msg: "Kỹ thuật viên đang thực hiện lắp đặt." };
-      if (/hen|phan cong|dieu phoi|xac nhan|da nhan|cho lap/.test(s)) return { tone: "info", step: 2, msg: "Đơn đã được điều phối. Kỹ thuật viên sẽ liên hệ trước khi đến." };
-      return { tone: "info", step: 1, msg: "Thợ Đúng đã tiếp nhận đơn và đang sắp xếp kỹ thuật viên." };
+      for (var i = 0; i < RULES.length; i++) if (RULES[i][0].test(s)) return RULES[i][1];
+      return { tone: "info", step: 1, msg: "Thợ Đúng đã tiếp nhận đơn và đang sắp xếp lịch." };
     }
     function el(tag, cls, text) {
       var n = document.createElement(tag);
@@ -219,27 +227,27 @@
       card.appendChild(head);
 
       if (c.step > 0) {
-        var steps = ["Tiếp nhận đơn", "Hẹn lịch lắp", "Đang lắp đặt", "Hoàn tất"];
+        var steps = STEPS;
         var ol = el("ol", "order__steps");
         ol.setAttribute("aria-label", "Tiến trình đơn hàng");
         steps.forEach(function (label, i) {
-          var n = i + 1, state = n < c.step ? "is-done" : n === c.step ? (c.tone === "ok" ? "is-done" : c.tone === "warn" ? "is-warn" : "is-current") : "";
+          var n = i + 1, state = n < c.step ? "is-done" : n === c.step ? (c.tone === "ok" ? "is-done" : c.tone === "warn" ? "is-warn" : c.tone === "fail" ? "is-fail" : "is-current") : "";
           var li = el("li", state);
           li.appendChild(el("span", "dot"));
           li.appendChild(el("span", "lbl", label));
-          if (state === "is-current" || state === "is-warn") li.setAttribute("aria-current", "step");
+          if (state === "is-current" || state === "is-warn" || state === "is-fail") li.setAttribute("aria-current", "step");
           ol.appendChild(li);
         });
         card.appendChild(ol);
       }
+      if (c.date && o.installDate) {
+        var dt = el("div", "order__date");
+        dt.appendChild(el("small", null, c.date));
+        dt.appendChild(el("strong", null, o.installDate));
+        card.appendChild(dt);
+      }
       card.appendChild(el("p", "order__msg", c.msg));
 
-      var dl = el("dl", "order__meta");
-      [["Ngày đơn hàng", o.orderDate], ["Ngày lắp đặt", o.installDate], ["Khu vực", o.province], ["Dịch vụ", o.service]].forEach(function (r) {
-        if (!r[1]) return;
-        var d = el("div"); d.appendChild(el("dt", null, r[0])); d.appendChild(el("dd", null, r[1])); dl.appendChild(d);
-      });
-      if (dl.children.length) card.appendChild(dl);
       if (o.note) card.appendChild(el("p", "order__note", o.note));
 
       var help = el("p", "order__help");

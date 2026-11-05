@@ -27,7 +27,7 @@ const CONFIG = {
     phone:       ['số điện thoại', 'sđt', 'sdt', 'điện thoại', 'sđt khách hàng', 'số điện thoại khách hàng', 'phone'],
     status:      ['trạng thái lắp đặt', 'trạng thái', 'status'],
     orderDate:   ['ngày đơn hàng', 'ngày tạo đơn', 'ngày đặt hàng'],
-    installDate: ['ngày lắp đặt', 'ngày hẹn lắp', 'lịch hẹn', 'ngày hẹn'],
+    installDate: ['ngày lắp đặt/hẹn lắp đặt', 'ngày lắp đặt / hẹn lắp đặt', 'ngày lắp đặt', 'ngày hẹn lắp đặt', 'ngày hẹn lắp', 'lịch hẹn', 'ngày hẹn'],
     province:    ['tỉnh', 'tỉnh/thành', 'tỉnh thành', 'khu vực'],
     service:     ['dịch vụ', 'sản phẩm', 'loại dịch vụ'],
     customerNote:['ghi chú cho khách'] // chỉ cột ghi chú dành riêng cho khách mới được hiển thị
@@ -114,7 +114,7 @@ function mapColumns_(header) {
 
 function normText_(s) {
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/\s+/g, ' ').trim();
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim();
 }
 
 function normCode_(s) {
