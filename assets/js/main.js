@@ -167,6 +167,123 @@
     });
   });
 
+  /* Order tracking (Tra cứu đơn) */
+  var trackForm = document.querySelector("[data-track-form]");
+  if (trackForm) {
+    var tStatus = trackForm.querySelector(".form__status");
+    var tBtn = trackForm.querySelector('button[type="submit"]');
+    var tResult = document.querySelector("[data-track-result]");
+    var codeIn = trackForm.elements.code, phoneIn = trackForm.elements.phone;
+    var HOTLINE = '<a href="tel:+84983050905">0983 05 09 05</a>';
+
+    var qs = new URLSearchParams(location.search);
+    if (qs.get("ma")) codeIn.value = qs.get("ma").replace(/\s+/g, "").toUpperCase().slice(0, 40);
+    codeIn.addEventListener("input", function () {
+      var pos = codeIn.selectionStart;
+      codeIn.value = codeIn.value.replace(/\s+/g, "").toUpperCase();
+      try { codeIn.setSelectionRange(pos, pos); } catch (e) {}
+    });
+    phoneIn.addEventListener("input", function () { phoneIn.value = phoneIn.value.replace(/\D/g, "").slice(0, 3); });
+
+    function fieldErr(input, msg) {
+      var err = input.closest(".field").querySelector(".err");
+      input.setAttribute("aria-invalid", msg ? "true" : "false");
+      err.textContent = msg || "";
+    }
+    function norm(s) {
+      return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+    }
+    function classify(status) {
+      var s = norm(status);
+      if (/thanh cong|hoan thanh|hoan tat|da lap/.test(s)) return { tone: "ok", step: 4, msg: "Đơn đã được lắp đặt xong. Cảm ơn bạn đã tin chọn Thợ Đúng." };
+      if (/that bai|chua thanh cong|khong thanh cong/.test(s)) return { tone: "warn", step: 3, msg: "Lần lắp đặt chưa thành công. Thợ Đúng sẽ liên hệ để hẹn lại lịch. Cần gấp, vui lòng gọi hotline." };
+      if (/khong co nhu cau|huy|tu choi/.test(s)) return { tone: "muted", step: 0, msg: "Đơn đã đóng do khách không có nhu cầu lắp đặt hoặc đã hủy. Nếu thông tin chưa đúng, vui lòng gọi hotline." };
+      if (/dang lap|dang thi cong|dang xu ly|dang/.test(s)) return { tone: "info", step: 3, msg: "Kỹ thuật viên đang thực hiện lắp đặt." };
+      if (/hen|phan cong|dieu phoi|xac nhan|da nhan|cho lap/.test(s)) return { tone: "info", step: 2, msg: "Đơn đã được điều phối. Kỹ thuật viên sẽ liên hệ trước khi đến." };
+      return { tone: "info", step: 1, msg: "Thợ Đúng đã tiếp nhận đơn và đang sắp xếp kỹ thuật viên." };
+    }
+    function el(tag, cls, text) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    }
+    function render(o) {
+      var c = classify(o.status);
+      tResult.innerHTML = "";
+      var card = el("article", "order order--" + c.tone);
+      var head = el("div", "order__head");
+      var id = el("div", "order__id"); id.appendChild(el("small", null, "Mã đơn hàng")); id.appendChild(el("strong", null, o.code));
+      head.appendChild(id);
+      head.appendChild(el("span", "order__badge", o.status || "Đã tiếp nhận"));
+      card.appendChild(head);
+
+      if (c.step > 0) {
+        var steps = ["Tiếp nhận đơn", "Hẹn lịch lắp", "Đang lắp đặt", "Hoàn tất"];
+        var ol = el("ol", "order__steps");
+        ol.setAttribute("aria-label", "Tiến trình đơn hàng");
+        steps.forEach(function (label, i) {
+          var n = i + 1, state = n < c.step ? "is-done" : n === c.step ? (c.tone === "ok" ? "is-done" : c.tone === "warn" ? "is-warn" : "is-current") : "";
+          var li = el("li", state);
+          li.appendChild(el("span", "dot"));
+          li.appendChild(el("span", "lbl", label));
+          if (state === "is-current" || state === "is-warn") li.setAttribute("aria-current", "step");
+          ol.appendChild(li);
+        });
+        card.appendChild(ol);
+      }
+      card.appendChild(el("p", "order__msg", c.msg));
+
+      var dl = el("dl", "order__meta");
+      [["Ngày đơn hàng", o.orderDate], ["Ngày lắp đặt", o.installDate], ["Khu vực", o.province], ["Dịch vụ", o.service]].forEach(function (r) {
+        if (!r[1]) return;
+        var d = el("div"); d.appendChild(el("dt", null, r[0])); d.appendChild(el("dd", null, r[1])); dl.appendChild(d);
+      });
+      if (dl.children.length) card.appendChild(dl);
+      if (o.note) card.appendChild(el("p", "order__note", o.note));
+
+      var help = el("p", "order__help");
+      help.innerHTML = 'Cần hỗ trợ về đơn này? Gọi ' + HOTLINE + ' hoặc <a href="https://zalo.me/0983050905" target="_blank" rel="noopener">nhắn Zalo</a>.';
+      card.appendChild(help);
+      tResult.appendChild(card);
+      tResult.hidden = false;
+      tResult.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+    }
+
+    trackForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      tStatus.className = "form__status"; tStatus.textContent = "";
+      var code = codeIn.value.replace(/\s+/g, "").toUpperCase(), phone = phoneIn.value.replace(/\D/g, "");
+      var ok = true;
+      if (code.length < 4) { fieldErr(codeIn, "Nhập mã đơn hàng (ít nhất 4 ký tự)."); ok = false; } else fieldErr(codeIn, "");
+      if (phone.length !== 3) { fieldErr(phoneIn, "Nhập đủ 3 số cuối số điện thoại."); ok = false; } else fieldErr(phoneIn, "");
+      if (!ok) { (code.length < 4 ? codeIn : phoneIn).focus(); return; }
+
+      tBtn.disabled = true;
+      var label = tBtn.innerHTML;
+      tBtn.textContent = "Đang tra cứu…";
+      tResult.hidden = true;
+
+      fetch("/api/tra-cuu", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: code, phone: phone }) })
+        .then(function (res) { return res.json().catch(function () { return {}; }); })
+        .then(function (r) {
+          if (r && r.ok && r.order) { render(r.order); return; }
+          var err = r && r.error, msg;
+          if (err === "not_found") msg = "Không tìm thấy đơn khớp với mã đơn và 3 số cuối điện thoại. Kiểm tra lại mã đơn (viết liền) và số điện thoại đã dùng khi mua hàng.";
+          else if (err === "locked") msg = "Bạn đã nhập sai nhiều lần. Vui lòng thử lại sau " + (r.minutes || 15) + " phút hoặc gọi " + HOTLINE + ".";
+          else if (err === "invalid") msg = "Mã đơn hoặc số điện thoại chưa đúng định dạng.";
+          else msg = "Hệ thống tra cứu đang bận. Vui lòng thử lại sau ít phút hoặc gọi " + HOTLINE + ".";
+          tStatus.className = "form__status is-err";
+          tStatus.innerHTML = msg;
+        })
+        .catch(function () {
+          tStatus.className = "form__status is-err";
+          tStatus.innerHTML = "Không kết nối được. Kiểm tra mạng rồi thử lại, hoặc gọi " + HOTLINE + ".";
+        })
+        .finally(function () { tBtn.disabled = false; tBtn.innerHTML = label; });
+    });
+  }
+
   /* Footer year */
   document.querySelectorAll("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();
